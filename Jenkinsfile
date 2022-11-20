@@ -1,34 +1,25 @@
 pipeline {
-  agent any	
-  stages {
+  agent any
+  parameters {
+  string defaultValue: 'TEST', description: 'Environment to deploy the application', name: 'ENV', trim: true
+   choice choices: ['main', 'master'], description: 'environment to deploy application', name: 'BRANCH'
+}	
+environment {
+       DEPLOY_BRANCH = "$BRANCH"
+	   DEPLOY_ENV = "$ENV"
+	   }
+   stages {
     stage ('BUILD') {
       steps {
-        echo "This is Build stage"
-        sh 'sleep 5;'
-      }  
-    }  
-      stage ('TEST PARALLEL') {
-	   parallel {
-	   stage ('TEST ON CHROME') {
-      steps {
-        echo "This is Test on chrome browser"
-        sh 'sleep 5;'
-      }  
-    }  
-	   
-    stage ('TEST ON SAFARI') {
-      steps {
-        echo "This is Test on Safari browser"
-        sh 'sleep 5;'
-      }  
-    }  
-  } 
-}
-	  stage('DEPLOY') {
-		  steps {
-			  echo 'This is Deploy stage'
-			  sh 'sleep 5'
-		  }
-	  }
+	  echo "Deploying to ${params.ENV}"
+	  echo "Code from ${params.BRANCH}"
+        sh '''
+		sleep 5
+		echo deploying to ${BRANCH}
+		echo code from ${ENV}
+		exit 0
+		'''
+		}
+	}
+     }
   }
-}
